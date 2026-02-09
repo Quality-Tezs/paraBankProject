@@ -6,21 +6,17 @@ pipeline {
         jdk 'Java21'
     }
 
-    environment {
-        MAVEN_OPTS = '-Dmaven.test.failure.ignore=true'
-    }
-
     stages {
-
-        stage('Checkout Code') {
-            steps {
-                git branch: 'master', url: 'https://github.com/Quality-Tezs/paraBankProject.git'
-            }
-        }
 
         stage('Clean Workspace') {
             steps {
                 cleanWs()
+            }
+        }
+
+        stage('Checkout Code') {
+            steps {
+                git branch: 'master', url: 'https://github.com/Quality-Tezs/paraBankProject.git'
             }
         }
 
@@ -39,8 +35,6 @@ pipeline {
         stage('Generate Allure Report') {
             steps {
                 allure([
-                    includeProperties: false,
-                    jdk: '',
                     results: [[path: 'target/allure-results']]
                 ])
             }
@@ -48,16 +42,12 @@ pipeline {
     }
 
     post {
-        always {
-            archiveArtifacts artifacts: '**/target/*.html', fingerprint: true
-        }
-
         success {
-            echo '✅ Pipeline completed successfully!'
+            echo '✅ Pipeline Completed Successfully'
         }
 
         failure {
-            echo '❌ Pipeline failed! Please check logs.'
+            echo '❌ Pipeline Failed'
         }
     }
 }
